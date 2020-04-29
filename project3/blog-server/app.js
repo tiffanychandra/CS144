@@ -3,11 +3,11 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var assert = require('assert');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var connectDatabase = require('./connectDatabase.js');
+var connectDatabase = require('./connectDatabase');
 
 var app = express();
 
@@ -23,8 +23,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-
+// connect to database 
+connectDatabase.init(function(err) {
+	assert.equal(null,err);
+})
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
