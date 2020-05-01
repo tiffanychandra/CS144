@@ -2,11 +2,16 @@
 <html>
 <head>
     <title>Login</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href="/stylesheets/style.css"/>
 </head>
 <body>
+    <h1>Login</h1>
+    <form action="login" method="POST">
+        <div>username: <input type="text" name="username" value="<%= username %>"></div>
+        <div>password: <input type="text" name="password" value="<%= password %>"></div>
 
-
-
+        <input id="redirect" type="hidden" name="redirect" value="<%= redirect %>">
+        <input type="submit" align="center" value="Submit">
+    </form>
 </body>
 </html>

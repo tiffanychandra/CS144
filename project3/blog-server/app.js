@@ -7,6 +7,7 @@ var assert = require("assert");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var blogRouter = require("./routes/blog");
+var loginRouter = require("./routes/login");
 
 var connectDatabase = require("./connectDatabase");
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/blog", blogRouter);
+app.use('/login', loginRouter);
 
 // connect to database
 connectDatabase.init(function (err) {
