@@ -7,5 +7,13 @@
   <body>
     <h1><%= username %>'s Posts</h1>
     <!-- <p>Welcome to <%= title %></p> -->
+    <% for (let post of posts) { %>
+    <p><%- post.titleHTML %></p>
+    <p><%- post.bodyHTML %></p>
+    <p>Created: <%= new Date(post.created) %></p>
+    <p>Modified: <%= new Date(post.modified) %></p>
+    <% } %> <% if (next_start) { %>
+    <a href="/blog/<%= username %>?start=<%= next_start %>" id="next">Next</a>
+    <% } %>
   </body>
 </html>
