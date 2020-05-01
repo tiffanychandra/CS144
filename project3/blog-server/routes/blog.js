@@ -8,4 +8,9 @@ router.get("/:username", function (req, res, next) {
   res.render("posts", { username: req.params.username });
 });
 
+/* Get one post with id=postid by user=username */
+router.get("/:username/:postid", function (req, res) {
+	res.render("posts", { postid: req.params.postid, username: req.params.username });
+});
+
 module.exports = router;
