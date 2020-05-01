@@ -37,7 +37,8 @@ router.post("/", function (req, res) {
       // set an authentication session cookie
       var token = jwt.sign(
         { usr: req.body.username, exp: Math.floor(Date.now() / 1000) + 7200 },
-        key
+        key,
+        { header: { alg: "HS256", typ: "JWT" } }
       );
       res.cookie("jwt", token);
       if (req.body.redirect != null) res.redirect(req.body.redirect);
