@@ -12,6 +12,9 @@ If a request does not meet our requirements (such as not formatting data in JSON
 This REST API must be protected behind authentication. That is, if the request to this API does not contain a valid jwt cookie with matching username (i.e., if the jwt cookie is not included in the HTTP header, 
 if the included jwt has expired, or if the username in jwt does not match the username in the URL), the server must reply with “401 (Unauthorized)” status code.
 */
+
+// GET /api/:username
+// response code should be 200
 router.get("/:username", async function (req, res, next) {
   try {
     // return all blog posts by username & check fields in post
@@ -33,4 +36,21 @@ router.get("/:username", async function (req, res, next) {
     return next(e);
   }
 });
+
+// GET /api/:username/:postid
+// response code should be 200 if post exists, 404 (not found) otherwise
+
+// POST /api/:username/:postid
+// repsonse code should be 201 if post created, 400 (bad request) otherwise
+
+// PUT /api/:username/:postid
+// response code should be 200 of successful update, 400 (bad request) otherwise
+
+// DELETE /api/:username/:postid
+// response code should be 204 if successful deletion, 400 (bad request) otherwise
+
+// if input requirements are bad, return 400
+// request body should be in JSON
+// REST API must be protected behind authentication
+
 module.exports = router;

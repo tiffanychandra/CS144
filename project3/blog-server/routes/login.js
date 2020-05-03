@@ -43,8 +43,9 @@ router.post("/", function (req, res) {
       res.cookie("jwt", token);
       if (req.body.redirect != null) res.redirect(req.body.redirect);
       else {
-        res.sendStatus(200);
-        res.send("Login successful.");
+        res.status(200).json({
+          message: "Login successful",
+        });
       }
       // redirect to redirect if provided or return status code 200
     }
