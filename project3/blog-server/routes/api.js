@@ -39,9 +39,58 @@ router.get("/:username", async function (req, res, next) {
 
 // GET /api/:username/:postid
 // response code should be 200 if post exists, 404 (not found) otherwise
+router.get("/:username/:postid", async function (req, res, next) {
+  try {
+    // return all blog posts by username & check fields in post
+    let db = connectDatabase.connection();
+    let posts = db.collection("Posts");
+    let docs = await posts
+      .findOne({
+        username: req.params.username,
+        postid: parseInt(req.params.postid),
+        title: { $exists: true },
+        body: { $exists: true },
+        created: { $exists: true },
+        modified: { $exists: true },
+      });
+      if(docs) res.json(docs);
+      else res.status(404).json(docs);
+  } catch (e) {
+    return next(e);
+  }
+});
 
 // POST /api/:username/:postid
 // repsonse code should be 201 if post created, 400 (bad request) otherwise
+router.post("/:username/:postid", async function (req, res, next) {
+  try {
+    let db = connectDatabase.connection();
+    let docs = await posts
+      .findOne({
+        username: req.params.username,
+        postid: parseInt(req.params.postid),
+      });
+      // bad request, post already exists
+      if(docs) {
+        res.status(400).json(docs); 
+      }
+
+      // add new post and return status = 201
+      else {
+        await connection.collection("Posts").insertOne({
+          username: req.params.username,
+          postid: parseInt(req.params.postid),
+          title: req.body.title,
+          body: req.body.body,
+          created: Date.now(),
+          modified: Date.now()
+        });
+        res.status(201).json(docs); 
+      }
+  } catch (e) {
+    return next(e);
+  }
+});
 
 // PUT /api/:username/:postid
 // response code should be 200 of successful update, 400 (bad request) otherwise
