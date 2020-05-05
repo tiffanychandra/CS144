@@ -94,9 +94,46 @@ router.post("/:username/:postid", async function (req, res, next) {
 
 // PUT /api/:username/:postid
 // response code should be 200 of successful update, 400 (bad request) otherwise
+router.put("/:username/:postid", async function(req, res, next) {
+    try {
+      let db = connectDatabase.connection();
+      let docs = await posts
+      .updateOne({
+        username: req.params.username,
+        postid: parseInt(req.params.postid),
+        }, { $set: { 
+          title: req.body.title,
+          body: req.body.body 
+        }});
+      res.status(200).json(docs);
+    }
+    catch (e) {
+      return next(e);
+    }
+});
 
 // DELETE /api/:username/:postid
 // response code should be 204 if successful deletion, 400 (bad request) otherwise
+router.delete("/:username/:postid", async function(req, res, next) {
+  try {
+    let db = connectDatabase.connection();
+    let docs = await posts
+      .deleteOne({
+        username: req.params.username,
+        postid: parseInt(req.params.postid),
+      });
+      if(docs.deletedCount == 1) {
+        res.status(204).json(docs);
+      }
+      else { // post does not exist 
+        res.status(400).json(docs); 
+      }
+
+  } 
+  catch (e) {
+    return next(e);
+  }
+});
 
 // if input requirements are bad, return 400
 // request body should be in JSON
