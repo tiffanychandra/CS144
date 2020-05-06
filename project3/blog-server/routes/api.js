@@ -57,7 +57,7 @@ router.get("/:username/:postid", async function (req, res, next) {
         title: { $exists: true },
         body: { $exists: true },
         created: { $exists: true },
-        modified: { $exists: true },
+        modified: { $exists: true }
       });
       if (docs) res.json(docs);
       else res.status(404).json(docs);
@@ -73,26 +73,32 @@ router.post("/:username/:postid", async function (req, res, next) {
   try {
     if (authenticate(req, res) && checkRequest(req, res, "POST")) {
       let db = connectDatabase.connection();
+      let posts = db.collection("Posts");
       let docs = await posts.findOne({
         username: req.params.username,
         postid: parseInt(req.params.postid),
+        title: { $exists: true },
+        body: { $exists: true },
+        created: { $exists: true },
+        modified: { $exists: true }
       });
+
       // bad request, post already exists
       if (docs) {
-        res.status(400).json(docs);
+        res.sendStatus(400);
       }
 
       // add new post and return status = 201
       else {
-        await connection.collection("Posts").insertOne({
+        await posts.insertOne({
           username: req.params.username,
           postid: parseInt(req.params.postid),
           title: req.body.title,
           body: req.body.body,
           created: Date.now(),
-          modified: Date.now(),
+          modified: Date.now()
         });
-        res.status(201).json(docs);
+        res.sendStatus(201);
       }
     }
   } catch (e) {
@@ -106,19 +112,23 @@ router.put("/:username/:postid", async function (req, res, next) {
   try {
     if (authenticate(req, res) && checkRequest(req, res, "PUT")) {
       let db = connectDatabase.connection();
-      let docs = await posts.updateOne(
-        {
+      let posts = db.collection("Posts");
+      let docs = await posts.updateOne({ 
           username: req.params.username,
           postid: parseInt(req.params.postid),
-        },
-        {
-          $set: {
+          title: { $exists: true },
+          body: { $exists: true },
+          created: { $exists: true },
+          modified: { $exists: true }
+        },{ $set: 
+          {
             title: req.body.title,
-            body: req.body.body,
+            body: req.body.body
           },
         }
       );
-      res.status(200).json(docs);
+      if(docs) res.sendStatus(200); // success
+      else res.sendStatus(400); 
     }
   } catch (e) {
     return next(e);
@@ -131,15 +141,20 @@ router.delete("/:username/:postid", async function (req, res, next) {
   try {
     if (authenticate(req, res) && checkRequest(req, res, "DELETE")) {
       let db = connectDatabase.connection();
+      let posts = db.collection("Posts");
       let docs = await posts.deleteOne({
         username: req.params.username,
         postid: parseInt(req.params.postid),
+        title: { $exists: true },
+        body: { $exists: true },
+        created: { $exists: true },
+        modified: { $exists: true }
       });
       if (docs.deletedCount == 1) {
-        res.status(204).json(docs);
+        res.sendStatus(204);
       } else {
         // post does not exist
-        res.status(400).json(docs);
+        res.sendStatus(400);
       }
     }
   } catch (e) {
