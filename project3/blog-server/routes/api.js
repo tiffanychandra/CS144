@@ -171,8 +171,8 @@ function checkRequest(req, res, method) {
     }
   } else if (method == "POST" || method == "PUT") {
     if (
-      !req.headers["content-type"] ||
-      type.indexOf("application/json") !== 0
+      !(req.headers["content-type"]) ||
+      (req.headers["content-type"]).indexOf("application/json") !== 0
     ) {
       res.sendStatus(400);
       return false;
