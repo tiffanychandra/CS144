@@ -22,7 +22,7 @@ if the included jwt has expired, or if the username in jwt does not match the us
 router.get("/:username", async function (req, res, next) {
   try {
     // return all blog posts by username & check fields in post
-    if (authenticate(req, res) && checkRequest(req, res, method)) {
+    if (authenticate(req, res) && checkRequest(req, res, "GET")) {
       let db = connectDatabase.connection();
       let posts = db.collection("Posts");
       let docs = await posts
@@ -48,7 +48,7 @@ router.get("/:username", async function (req, res, next) {
 router.get("/:username/:postid", async function (req, res, next) {
   try {
     // return all blog posts by username & check fields in post
-    if (authenticate(req, res) && checkRequest(req, res, method)) {
+    if (authenticate(req, res) && checkRequest(req, res, "GET")) {
       let db = connectDatabase.connection();
       let posts = db.collection("Posts");
       let docs = await posts.findOne({
@@ -71,7 +71,7 @@ router.get("/:username/:postid", async function (req, res, next) {
 // repsonse code should be 201 if post created, 400 (bad request) otherwise
 router.post("/:username/:postid", async function (req, res, next) {
   try {
-    if (authenticate(req, res) && checkRequest(req, res, method)) {
+    if (authenticate(req, res) && checkRequest(req, res, "POST")) {
       let db = connectDatabase.connection();
       let docs = await posts.findOne({
         username: req.params.username,
@@ -104,7 +104,7 @@ router.post("/:username/:postid", async function (req, res, next) {
 // response code should be 200 of successful update, 400 (bad request) otherwise
 router.put("/:username/:postid", async function (req, res, next) {
   try {
-    if (authenticate(req, res) && checkRequest(req, res, method)) {
+    if (authenticate(req, res) && checkRequest(req, res, "PUT")) {
       let db = connectDatabase.connection();
       let docs = await posts.updateOne(
         {
@@ -129,7 +129,7 @@ router.put("/:username/:postid", async function (req, res, next) {
 // response code should be 204 if successful deletion, 400 (bad request) otherwise
 router.delete("/:username/:postid", async function (req, res, next) {
   try {
-    if (authenticate(req, res) && checkRequest(req, res, method)) {
+    if (authenticate(req, res) && checkRequest(req, res, "DELETE")) {
       let db = connectDatabase.connection();
       let docs = await posts.deleteOne({
         username: req.params.username,
@@ -149,9 +149,11 @@ router.delete("/:username/:postid", async function (req, res, next) {
 
 function checkRequest(req, res, method) {
   // If a request does not meet our requirements (such as not formatting data in JSON, not including required data, etc.), the server must reply with “400 (Bad request)” status code.
-  if (method == "GET" && !req.params.postid) {
-    res.sendStatus(400);
-    return false;
+  if (method == "GET") {
+    if (req.params.postid && isNaN(req.params.postid)) {
+      res.sendStatus(400);
+      return false;
+    }
   } else if (method == "POST" || method == "PUT") {
     if (
       !req.headers["content-type"] ||
