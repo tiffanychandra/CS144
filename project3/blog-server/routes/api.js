@@ -36,7 +36,7 @@ router.get("/:username", async function (req, res, next) {
         })
         .toArray();
       // return response body as json array
-      res.json(docs);
+      res.status(200).json(docs);
     }
   } catch (e) {
     return next(e);
@@ -57,9 +57,9 @@ router.get("/:username/:postid", async function (req, res, next) {
         title: { $exists: true },
         body: { $exists: true },
         created: { $exists: true },
-        modified: { $exists: true }
+        modified: { $exists: true },
       });
-      if (docs) res.json(docs);
+      if (docs) res.status(200).json(docs);
       else res.status(404).json(docs);
     }
   } catch (e) {
@@ -80,7 +80,7 @@ router.post("/:username/:postid", async function (req, res, next) {
         title: { $exists: true },
         body: { $exists: true },
         created: { $exists: true },
-        modified: { $exists: true }
+        modified: { $exists: true },
       });
 
       // bad request, post already exists
@@ -96,7 +96,7 @@ router.post("/:username/:postid", async function (req, res, next) {
           title: req.body.title,
           body: req.body.body,
           created: Date.now(),
-          modified: Date.now()
+          modified: Date.now(),
         });
         res.sendStatus(201);
       }
@@ -113,22 +113,25 @@ router.put("/:username/:postid", async function (req, res, next) {
     if (authenticate(req, res) && checkRequest(req, res, "PUT")) {
       let db = connectDatabase.connection();
       let posts = db.collection("Posts");
-      let docs = await posts.updateOne({ 
+      let docs = await posts.updateOne(
+        {
           username: req.params.username,
           postid: parseInt(req.params.postid),
           title: { $exists: true },
           body: { $exists: true },
           created: { $exists: true },
-          modified: { $exists: true }
-        },{ $set: 
-          {
+          modified: { $exists: true },
+        },
+        {
+          $set: {
             title: req.body.title,
-            body: req.body.body
+            body: req.body.body,
           },
         }
       );
-      if(docs) res.sendStatus(200); // success
-      else res.sendStatus(400); 
+      if (docs) res.sendStatus(200);
+      // success
+      else res.sendStatus(400);
     }
   } catch (e) {
     return next(e);
@@ -148,7 +151,7 @@ router.delete("/:username/:postid", async function (req, res, next) {
         title: { $exists: true },
         body: { $exists: true },
         created: { $exists: true },
-        modified: { $exists: true }
+        modified: { $exists: true },
       });
       if (docs.deletedCount == 1) {
         res.sendStatus(204);
@@ -172,7 +175,7 @@ function checkRequest(req, res, method) {
   } else if (method == "POST" || method == "PUT") {
     if (
       !req.headers["content-type"] ||
-      type.indexOf("application/json") !== 0
+      req.headers["content-type"].indexOf("application/json") !== 0
     ) {
       res.sendStatus(400);
       return false;

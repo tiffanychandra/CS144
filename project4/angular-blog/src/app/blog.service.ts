@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
+<<<<<<< HEAD
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 
 const jwt_decode = require('jwt_decode')
+=======
+import { HttpClientModule } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+
+import * as jwt_decode from 'jwt-decode';
+>>>>>>> a4cafb54e08a559d696af8dbf2625144bac5fdee
 
 export class Post {
   postid: number;
@@ -26,6 +33,7 @@ export class Post {
 })
 export class BlogService {
   private posts: Post[];
+<<<<<<< HEAD
   constructor(private http: HttpClient) {}
 
   fetchPosts(username: string): Promise<Post> {
@@ -54,6 +62,22 @@ export class BlogService {
 
     return promise;
   }
+=======
+  constructor(private http: HttpClientModule) {}
+
+  // TO DO
+  // fetchPosts(username: string): Post[] {
+
+  // }
+
+  // getPost(username: string, postid: number): Post {
+
+  // }
+
+  // newPost(username: string, post: Post): void {
+
+  // }
+>>>>>>> a4cafb54e08a559d696af8dbf2625144bac5fdee
 
   updatePost(username: string, post: Post): void {
     let previous = this.posts.find((curPost) => curPost.postid == post.postid);

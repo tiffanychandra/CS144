@@ -45,33 +45,40 @@ router.get("/:username", function (req, res) {
 
 /* Get one post with id=postid by user=username */
 router.get("/:username/:postid", function (req, res) {
-	let db = connectDatabase.connection();
-	let post = db.collection("Posts");
-	post.findOne({
-      	$and: [{ "username": req.params.username }, { "postid": parseInt(req.params.postid) }]}, 
-      	function(error, foundPost) {
-    		// bad request
-    		if(error) {
-    			res.sendStatus(400);
-				return;
-    		} 
-    		if(foundPost) {
-    			let reader = new commonmark.Parser();
-      			let writer = new commonmark.HtmlRenderer();
-      			let titleParsed = writer.render(reader.parse(foundPost.title));
-		        let bodyParsed = writer.render(reader.parse(foundPost.body));
+  let db = connectDatabase.connection();
+  let post = db.collection("Posts");
+  post.findOne(
+    {
+      $and: [
+        { username: req.params.username },
+        { postid: parseInt(req.params.postid) },
+      ],
+    },
+    function (error, foundPost) {
+      // bad request
+      if (error) {
+        res.sendStatus(400);
+        return;
+      }
+      if (foundPost) {
+        let reader = new commonmark.Parser();
+        let writer = new commonmark.HtmlRenderer();
+        let titleParsed = writer.render(reader.parse(foundPost.title));
+        let bodyParsed = writer.render(reader.parse(foundPost.body));
 
-        		res.render("post", { 
-				"title": foundPost.title,
-		        "titleHTML": titleParsed,
-		        "bodyHTML": bodyParsed });
-    		}
-    		// post not found
-    		else { 
-    			res.sendStatus(400);
-				return;
-    		}
-    	});
-})
+        res.render("post", {
+          title: foundPost.title,
+          titleHTML: titleParsed,
+          bodyHTML: bodyParsed,
+        });
+      }
+      // post not found
+      else {
+        res.sendStatus(404);
+        return;
+      }
+    }
+  );
+});
 
 module.exports = router;
