@@ -1,15 +1,10 @@
 import { Injectable } from '@angular/core';
-<<<<<<< HEAD
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-
-const jwt_decode = require('jwt_decode')
-=======
-import { HttpClientModule } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import * as jwt_decode from 'jwt-decode';
->>>>>>> a4cafb54e08a559d696af8dbf2625144bac5fdee
 
 export class Post {
   postid: number;
@@ -19,99 +14,134 @@ export class Post {
   body: string;
 }
 
-// function getUsername() {
-//   var str = '; ' + document.cookie;
-//   var values = str.split('; ' + 'jwt' + '=');
-//   if (values.length == 2) {
-//     var cookie = values.pop().split(';').shift();
-//   }
-//   return jwt_decode(cookie).usr;
-// }
+function getUsername() {
+  var str = '; ' + document.cookie;
+  var values = str.split('; ' + 'jwt' + '=');
+  if (values.length == 2) {
+    var cookie = values.pop().split(';').shift();
+  }
+  return jwt_decode(cookie).usr;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class BlogService {
   private posts: Post[];
-<<<<<<< HEAD
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {
+    var username = getUsername();
+    this.fetchPosts(username);
+  }
 
   fetchPosts(username: string): Promise<Post> {
-    let promise = new Promise<Post>(function(resolve, reject) {
-      this.posts = []; 
-      this.http.get('/api/' + username)
-        .subscribe(posts => this.posts = posts);
+    let promise = new Promise<Post>(function (resolve, reject) {
+      this.posts = [];
+      this.http
+        .get('/api/' + username)
+        .subscribe((posts) => (this.posts = posts));
     });
 
     return promise;
   }
+
+  // fetchPosts(username: string): Observable<Post[]> {
+  //   return this.http.get<Post[]>('/api/' + username).pipe(
+  //     tap((_) => console.log('fetched heroes')),
+  //     catchError(this.handleError<Post[]>('getHeroes', []))
+  //   );
+  // }
 
   getPost(username: string, postid: number): Promise<Post> {
-    let promise = new Promise<Post>(function(resolve, reject) {
-      this.posts = []; 
-      this.http.find(post => post.postid = postid)
+    let promise = new Promise<Post>(function (resolve, reject) {
+      this.posts = [];
+      this.http.find((post) => post.postid == postid);
     });
 
     return promise;
   }
 
-  newPost(username: string, post: Post): Promise<void> {
-    let promise = new Promise<void>(function(resolve, reject) {
-      
-    });
+  // getPost(postid: number): Post {
+  //   return this.posts.find((post) => post.postid == postid);
+  // }
 
-    return promise;
+  // newPost(username: string, post: Post): Promise<void> {
+  //   let promise = new Promise<void>(function (resolve, reject) {});
+
+  //   return promise;
+  // }
+
+  newPost(username: string): Observable<Post> {
+    let new_id =
+      this.posts.reduce((post1, post2) =>
+        post1.postid > post2.postid ? post1 : post2
+      ).postid + 1;
+    let post: Post = {
+      postid: new_id,
+      created: new Date(),
+      modified: new Date(),
+      title: '',
+      body: '',
+    };
+    this.posts.push(post);
+    return this.http
+      .post<Post>('/api/' + username + '/' + post.postid, {
+        title: post.title,
+        body: post.body,
+      })
+      .pipe(
+        tap((newPost: Post) => {
+          console.log(`added post with id ${newPost.postid}`);
+          this.router.navigate(['/']);
+        }),
+        catchError(this.handleError<Post>('newPost'))
+      );
   }
-=======
-  constructor(private http: HttpClientModule) {}
 
-  // TO DO
-  // fetchPosts(username: string): Post[] {
-
-  // }
-
-  // getPost(username: string, postid: number): Post {
-
-  // }
-
-  // newPost(username: string, post: Post): void {
-
-  // }
->>>>>>> a4cafb54e08a559d696af8dbf2625144bac5fdee
-
-  updatePost(username: string, post: Post): void {
+  updatePost(username: string, post: Post): Observable<any> {
     let previous = this.posts.find((curPost) => curPost.postid == post.postid);
     if (previous) {
       let i = this.posts.indexOf(previous);
       this.posts[i].title = post.title;
       this.posts[i].body = post.body;
       this.posts[i].modified = new Date();
-      this.http
+      return this.http
         .put('/api/' + username + '/' + post.postid, {
           title: post.title,
           body: post.body,
         })
-        .subscribe(console.log());
+        .pipe(
+          tap((_) => console.log(`updated post with id=${post.postid}`)),
+          catchError(this.handleError<any>('updatePost'))
+        );
     }
   }
 
-  deletePost(username: string, postid: number): void {
+  deletePost(username: string, postid: number): Observable<Post> {
     let post = this.posts.find((post) => post.postid == postid);
     if (post) {
       let i = this.posts.indexOf(post);
       this.posts.splice(i, 1);
-      this.http
-        .delete('/api/' + username + '/' + post.postid)
-        .subscribe(console.log());
+      return this.http
+        .delete<Post>('/api/' + username + '/' + post.postid)
+        .pipe(
+          tap((_) => console.log(`deleted post with id ${postid}`)),
+          catchError(this.handleError<Post>('deletePost'))
+        );
     }
   }
 
-  // performed as local operations, no need to implement for express server
-  // setCurrentDraft(post: Post): void {
+  // from angular.io/tutorial/toh-pt6
 
-  // }
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      // TODO: send the error to remote logging infrastructure
+      console.error(error); // log to console instead
 
-  // getCurrentDraft(): Post {
+      // TODO: better job of transforming error for user consumption
+      console.log(`${operation} failed: ${error.message}`);
 
-  // }
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
 }
