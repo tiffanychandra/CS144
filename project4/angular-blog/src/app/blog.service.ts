@@ -27,7 +27,9 @@ function getUsername() {
   providedIn: 'root',
 })
 export class BlogService {
-  private posts: Post[];
+  // private posts: Post[];
+  // changed to not private for testing purposes
+  posts: Post[];
   constructor(private http: HttpClient, private router: Router) {
     var username = getUsername();
     this.fetchPosts(username);
