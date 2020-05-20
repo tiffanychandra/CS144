@@ -13,11 +13,11 @@ describe('BlogService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      // imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule],
       providers: [BlogService],
     });
-    // service = TestBed.get(BlogService);
-    // httpTestingController = TestBed.get(HttpTestingController);
+    service = TestBed.get(BlogService);
+    httpTestingController = TestBed.get(HttpTestingController);
   });
 
   it('should be created', inject([BlogService], (service: BlogService) => {
