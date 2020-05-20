@@ -1,14 +1,15 @@
-import { TestBed, fakeAsync, tick, inject } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { BlogService } from './blog.service';
 
 describe('BlogService', () => {
   let service: BlogService;
+  let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
@@ -16,8 +17,9 @@ describe('BlogService', () => {
       imports: [HttpClientTestingModule],
       providers: [BlogService],
     });
-    service = TestBed.get(BlogService);
-    httpTestingController = TestBed.get(HttpTestingController);
+    // service = TestBed.get(BlogService);
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   it('should be created', inject([BlogService], (service: BlogService) => {

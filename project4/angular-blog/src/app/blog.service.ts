@@ -18,14 +18,12 @@ function getUsername() {
   var str = '; ' + document.cookie;
   var values = str.split('; ' + 'jwt' + '=');
   if (values.length == 2) {
-    var cookie = values.pop().split(';').shift();
+    var token = values.pop().split(';').shift();
   }
-  return jwt_decode(cookie).usr;
+  return jwt_decode(token).usr;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class BlogService {
   private posts: Post[];
   constructor(private http: HttpClient, private router: Router) {
@@ -33,23 +31,27 @@ export class BlogService {
     this.fetchPosts(username);
   }
 
-  fetchPosts(username: string): Promise<Post> {
-    let promise = new Promise<Post>(function (resolve, reject) {
-      this.posts = [];
-      this.http
-        .get('/api/' + username)
-        .subscribe((posts) => (this.posts = posts));
-    });
+  // fetchPosts(username: string): Promise<Post> {
+  //   let promise = new Promise<Post>(function (resolve, reject) {
+  //     this.posts = [];
+  //     this.http
+  //       .get('/api/' + username)
+  //       .subscribe((posts) => (this.posts = posts));
+  //   });
 
-    return promise;
+  //   return promise;
+  // }
+
+  fetchPosts(username: string): Observable<Post[]> {
+    return this.http.get<Post[]>('/api/' + username).pipe(
+      tap((_) => console.log('fetched heroes')),
+      catchError(this.handleError<Post[]>('getHeroes', []))
+    );
   }
 
-  // fetchPosts(username: string): Observable<Post[]> {
-  //   return this.http.get<Post[]>('/api/' + username).pipe(
-  //     tap((_) => console.log('fetched heroes')),
-  //     catchError(this.handleError<Post[]>('getHeroes', []))
-  //   );
-  // }
+  getPosts(): Post[] {
+    return this.posts;
+  }
 
   getPost(username: string, postid: number): Promise<Post> {
     let promise = new Promise<Post>(function (resolve, reject) {
