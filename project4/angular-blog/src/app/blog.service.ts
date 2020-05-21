@@ -31,26 +31,12 @@ export class BlogService {
     this.fetchPosts(username);
   }
 
-  // fetchPosts(username: string): Promise<Post> {
-  //   let promise = new Promise<Post>(function (resolve, reject) {
-  //     this.posts = [];
-  //     this.http
-  //       .get('/api/' + username)
-  //       .subscribe((posts) => (this.posts = posts));
-  //   });
-
-  //   return promise;
-  // }
-
-  fetchPosts(username: string): Observable<Post[]> {
-    return this.http.get<Post[]>('/api/' + username).pipe(
-      tap((_) => console.log('fetched heroes')),
-      catchError(this.handleError<Post[]>('getHeroes', []))
-    );
+  fetchPosts(username: string): void {
+    this.http.get<Post[]>('/api/' + username).subscribe(posts => {this.posts = posts;});
   }
 
-  getPosts(): Post[] {
-    return this.posts;
+  getPosts(): Observable<Post[]> {
+    return of(this.posts);
   }
 
   getPost(username: string, postid: number): Promise<Post> {

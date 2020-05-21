@@ -1,1 +1,9 @@
-<p>list works!</p>
+<h2>
+	Post List
+	<!-- <div><button class="button" (click)="newPost()">New Post</button></div> -->
+</h2>
+
+<ul *ngIf="posts">
+    <a *ngFor="let post of blogService.getPosts()">{{ post.created | date: "short" }}
+    &nbsp;&nbsp; {{post.title}} </a>
+</ul>
