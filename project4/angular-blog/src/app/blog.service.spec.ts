@@ -17,7 +17,6 @@ describe('BlogService', () => {
       imports: [HttpClientTestingModule],
       providers: [BlogService],
     });
-    // service = TestBed.get(BlogService);
     httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
   });

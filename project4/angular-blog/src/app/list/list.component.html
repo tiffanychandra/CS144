@@ -1,9 +1,9 @@
-<h2>
-	Post List
-	<!-- <div><button class="button" (click)="newPost()">New Post</button></div> -->
-</h2>
-
-<ul *ngIf="posts">
-    <a *ngFor="let post of blogService.getPosts()">{{ post.created | date: "short" }}
-    &nbsp;&nbsp; {{post.title}} </a>
+<h2>Blog List</h2>
+<div><button>New Post</button></div>
+<ul>
+  <li *ngFor="let post of posts">
+    <a [routerLink]="['/edit', post.postid]">
+      {{ post.created | date: "short" }}&nbsp;&nbsp;{{ post.title }}
+    </a>
+  </li>
 </ul>

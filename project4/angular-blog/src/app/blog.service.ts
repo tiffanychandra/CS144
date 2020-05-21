@@ -32,31 +32,27 @@ export class BlogService {
   }
 
   fetchPosts(username: string): void {
-    this.http.get<Post[]>('/api/' + username).subscribe(posts => {this.posts = posts;});
+    this.posts = [];
+    this.http.get<Post[]>('/api/' + username).subscribe((posts) => {
+      this.posts = posts;
+    });
   }
 
   getPosts(): Observable<Post[]> {
-    return of(this.posts);
+    var username = getUsername();
+    return this.http.get<Post[]>('/api/' + username).pipe(
+      tap((_) => console.log('fetched posts')),
+      catchError(this.handleError<Post[]>('getPosts', []))
+    );
   }
 
-  getPost(username: string, postid: number): Promise<Post> {
-    let promise = new Promise<Post>(function (resolve, reject) {
-      this.posts = [];
-      this.http.find((post) => post.postid == postid);
-    });
-
-    return promise;
+  getPost(postid: number): Observable<Post> {
+    const url = `/api/${getUsername()}/${postid}`;
+    return this.http.get<Post>(url).pipe(
+      tap((_) => console.log(`fetched post id=${postid}`)),
+      catchError(this.handleError<Post>(`getPost id=${postid}`))
+    );
   }
-
-  // getPost(postid: number): Post {
-  //   return this.posts.find((post) => post.postid == postid);
-  // }
-
-  // newPost(username: string, post: Post): Promise<void> {
-  //   let promise = new Promise<void>(function (resolve, reject) {});
-
-  //   return promise;
-  // }
 
   newPost(username: string): Observable<Post> {
     let new_id =
@@ -85,7 +81,8 @@ export class BlogService {
       );
   }
 
-  updatePost(username: string, post: Post): Observable<any> {
+  updatePost(post: Post): Observable<any> {
+    var username = getUsername();
     let previous = this.posts.find((curPost) => curPost.postid == post.postid);
     if (previous) {
       let i = this.posts.indexOf(previous);
@@ -104,7 +101,9 @@ export class BlogService {
     }
   }
 
-  deletePost(username: string, postid: number): Observable<Post> {
+  deletePost(postid: number): Observable<Post> {
+    var username = getUsername();
+
     let post = this.posts.find((post) => post.postid == postid);
     if (post) {
       let i = this.posts.indexOf(post);
