@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Parser, HtmlRenderer } from 'commonmark';
 import { Post, BlogService } from '../blog.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-preview',
@@ -28,12 +29,18 @@ export class PreviewComponent implements OnInit {
 
   getPostHTML(): void {
   	const id = +this.route.snapshot.paramMap.get('id');
-  	this.blogService.getPost(id).subscribe((post) => (this.post = post));
-  	if(this.post) {
+    this.blogService.getPost(id).subscribe((post) => (this.post = post));
+    if (this.post) {
+    	console.log("testing");
   		this.postHTML = this.htmlRenderer.render(this.parser.parse(this.post.title)) 
   						+ this.htmlRenderer.render(this.parser.parse(this.post.body));
 
   	}
+  }
+
+  // navigate to edit post
+  editPost(): void {
+    this.router.navigate(['edit', this.post.postid]);
   }
 
 }

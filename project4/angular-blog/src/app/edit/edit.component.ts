@@ -25,7 +25,6 @@ export class EditComponent implements OnInit {
   }
 
   getPost(): void {
-    console.log('test');
     const id = +this.route.snapshot.paramMap.get('id');
     this.blogService.getPost(id).subscribe((post) => (this.post = post));
     if (this.post) {
@@ -45,7 +44,7 @@ export class EditComponent implements OnInit {
     if (this.form.dirty) {
       this.save();
     }
-    // go to preview
+    this.router.navigate(['preview', this.post.postid]);
   }
 
   delete(): void {

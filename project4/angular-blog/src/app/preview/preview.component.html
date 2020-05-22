@@ -1,4 +1,3 @@
-<div *ngIf="post">
-  <div [innerHTML]="postHTML"></div>
-  <div><button (click)="edit()">Edit</button></div>
-</div>
+
+  <div *ngIf="postHTML" [innerHTML]="postHTML"></div>
+  <div><button type="button" (click)="editPost()">Edit</button></div>
