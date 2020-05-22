@@ -54,18 +54,31 @@ export class BlogService {
     );
   }
 
-  newPost(username: string): Observable<Post> {
-    let new_id =
-      this.posts.reduce((post1, post2) =>
-        post1.postid > post2.postid ? post1 : post2
-      ).postid + 1;
+  newPost(): Observable<Post> {
+    const username = getUsername();
     let post: Post = {
-      postid: new_id,
+      postid: 0,
       created: new Date(),
       modified: new Date(),
       title: '',
       body: '',
     };
+    post.postid =
+      this.posts.reduce((post1, post2) =>
+        post1.postid > post2.postid ? post1 : post2
+      ).postid + 1;
+
+    // let new_id =
+    //   this.posts.reduce((post1, post2) =>
+    //     post1.postid > post2.postid ? post1 : post2
+    //   ).postid + 1;
+    // let post: Post = {
+    //   postid: new_id,
+    //   created: new Date(),
+    //   modified: new Date(),
+    //   title: '',
+    //   body: '',
+    // };
     this.posts.push(post);
     return this.http
       .post<Post>('/api/' + username + '/' + post.postid, {
@@ -82,39 +95,26 @@ export class BlogService {
   }
 
   updatePost(post: Post): Observable<any> {
-    var username = getUsername();
-    let previous = this.posts.find((curPost) => curPost.postid == post.postid);
-    if (previous) {
-      let i = this.posts.indexOf(previous);
-      this.posts[i].title = post.title;
-      this.posts[i].body = post.body;
-      this.posts[i].modified = new Date();
-      return this.http
-        .put('/api/' + username + '/' + post.postid, {
-          title: post.title,
-          body: post.body,
-        })
-        .pipe(
-          tap((_) => console.log(`updated post with id=${post.postid}`)),
-          catchError(this.handleError<any>('updatePost'))
-        );
-    }
+    const username = getUsername();
+    return this.http
+      .put('/api/' + username + '/' + post.postid, {
+        title: post.title,
+        body: post.body,
+        modified: new Date(),
+      })
+      .pipe(
+        tap((_) => console.log(`updated post with id=${post.postid}`)),
+        catchError(this.handleError<any>('updatePost'))
+      );
   }
 
   deletePost(postid: number): Observable<Post> {
-    var username = getUsername();
-
-    let post = this.posts.find((post) => post.postid == postid);
-    if (post) {
-      let i = this.posts.indexOf(post);
-      this.posts.splice(i, 1);
-      return this.http
-        .delete<Post>('/api/' + username + '/' + post.postid)
-        .pipe(
-          tap((_) => console.log(`deleted post with id ${postid}`)),
-          catchError(this.handleError<Post>('deletePost'))
-        );
-    }
+    const username = getUsername();
+    const url = `/api/${username}/${postid}`;
+    return this.http.delete<Post>(url).pipe(
+      tap((_) => console.log(`deleted hero id=${postid}`)),
+      catchError(this.handleError<Post>('deletePost'))
+    );
   }
 
   // from angular.io/tutorial/toh-pt6

@@ -19,4 +19,14 @@ export class ListComponent implements OnInit {
   getPosts(): void {
     this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
   }
+
+  createPost(): void {
+    let postid;
+    this.blogService.newPost().subscribe((post) => {
+      this.posts.push(post);
+      postid = post.postid;
+    });
+    this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
+    this.router.navigate(['edit', postid]);
+  }
 }
