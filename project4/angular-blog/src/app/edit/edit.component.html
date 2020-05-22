@@ -1,6 +1,6 @@
 <div *ngIf="post">
-  <form *ngIf="form" [formGroup]="form" #formDir="ngForm">
-    <h1>Edit Post</h1>
+  <form *ngIf="form" class="form" [formGroup]="form" #formDir="ngForm">
+    <h2>Edit Post</h2>
     <div>
       <div>
         <label for="title">Title:</label>
@@ -10,6 +10,7 @@
           name="title"
           [(ngModel)]="post.title"
           formControlName="title"
+          class="formbox"
         />
       </div>
       <div>
@@ -21,16 +22,17 @@
           [cols]="20"
           [(ngModel)]="post.body"
           formControlName="body"
+          class="formbox"
         ></textarea>
       </div>
       <div>
         <span>Last Modified: {{ post.modified | date: "long" }}</span>
       </div>
-      <button type="button" [disabled]="form.pristine" (click)="save()">
+      <button type="button" class="button" [disabled]="form.pristine" (click)="save()">
         Save
       </button>
-      <button type="button" (click)="preview()">Preview</button>
-      <button type="button" (click)="delete()">Delete</button>
+      <button type="button" class="button" (click)="preview()">Preview</button>
+      <button type="button" class="button" (click)="delete()">Delete</button>
     </div>
   </form>
 </div>

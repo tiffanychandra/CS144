@@ -11,6 +11,6 @@ export class AppComponent {
   title: string;
 
   constructor(private blogService: BlogService) {
-    this.title = 'Angular Blog';
+    this.title = 'Markdown Editor';
   }
 }
