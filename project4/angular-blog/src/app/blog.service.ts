@@ -97,11 +97,15 @@ export class BlogService {
   updatePost(post: Post): Observable<any> {
     const username = getUsername();
     return this.http
-      .put('/api/' + username + '/' + post.postid, {
-        title: post.title,
-        body: post.body,
-        modified: new Date(),
-      })
+      .put(
+        '/api/' + username + '/' + post.postid,
+        {
+          title: post.title,
+          body: post.body,
+          modified: new Date(),
+        },
+        { responseType: 'text' }
+      )
       .pipe(
         tap((_) => console.log(`updated post with id=${post.postid}`)),
         catchError(this.handleError<any>('updatePost'))
