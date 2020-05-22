@@ -10,9 +10,10 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ListComponent } from './list/list.component';
 import { EditComponent } from './edit/edit.component';
+import { PreviewComponent } from './preview/preview.component';
 
 @NgModule({
-  declarations: [AppComponent, ListComponent, EditComponent],
+  declarations: [AppComponent, ListComponent, EditComponent, PreviewComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

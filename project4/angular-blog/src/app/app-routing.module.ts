@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { EditComponent } from './edit/edit.component';
 import { CanDeactivateGuard } from './can-deactivate.guard';
+import { PreviewComponent } from './preview/preview.component';
 
 const routes: Routes = [
   {
@@ -9,6 +10,10 @@ const routes: Routes = [
     component: EditComponent,
     canDeactivate: [CanDeactivateGuard],
   },
+  {
+  	path: 'preview/:id',
+  	component: PreviewComponent
+  }
 ];
 
 @NgModule({
