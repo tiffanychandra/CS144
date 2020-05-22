@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Observable } from 'rxjs';
 
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -26,7 +25,7 @@ export class EditComponent implements OnInit {
 
   getPost(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    this.blogService.getPost(id).subscribe((post) => (this.post = post));
+    this.post = this.blogService.getPost(id);
     if (this.post) {
       this.form = new FormGroup({
         title: new FormControl(this.post.title),

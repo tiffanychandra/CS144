@@ -23,6 +23,9 @@
           formControlName="body"
         ></textarea>
       </div>
+      <div>
+        <span>Last Modified: {{ post.modified | date: "long" }}</span>
+      </div>
       <button type="button" [disabled]="form.pristine" (click)="save()">
         Save
       </button>

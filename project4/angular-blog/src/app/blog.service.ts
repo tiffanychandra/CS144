@@ -15,8 +15,8 @@ export class Post {
 }
 
 function getUsername() {
-  var str = '; ' + document.cookie;
-  var values = str.split('; ' + 'jwt' + '=');
+  let str = '; ' + document.cookie;
+  let values = str.split('; ' + 'jwt' + '=');
   if (values.length == 2) {
     var token = values.pop().split(';').shift();
   }
@@ -26,6 +26,8 @@ function getUsername() {
 @Injectable()
 export class BlogService {
   private posts: Post[];
+  postObservable: Observable<Post>;
+
   constructor(private http: HttpClient, private router: Router) {
     var username = getUsername();
     this.fetchPosts(username);
@@ -39,19 +41,26 @@ export class BlogService {
   }
 
   getPosts(): Observable<Post[]> {
-    var username = getUsername();
+    const username = getUsername();
     return this.http.get<Post[]>('/api/' + username).pipe(
       tap((_) => console.log('fetched posts')),
       catchError(this.handleError<Post[]>('getPosts', []))
     );
   }
 
-  getPost(postid: number): Observable<Post> {
-    const url = `/api/${getUsername()}/${postid}`;
-    return this.http.get<Post>(url).pipe(
-      tap((_) => console.log(`fetched post id=${postid}`)),
-      catchError(this.handleError<Post>(`getPost id=${postid}`))
-    );
+  // getPost(postid: number): Observable<Post> {
+  //   const url = `/api/${getUsername()}/${postid}`;
+
+  //   this.postObservable = this.http.get<Post>(url).pipe(
+  //     share(),
+  //     tap((_) => console.log(`fetched post id=${postid}`)),
+  //     catchError(this.handleError<Post>(`getPost id=${postid}`))
+  //   );
+  //   return this.postObservable;
+  // }
+
+  getPost(postid: number): Post {
+    return this.posts.find((post) => post.postid === postid);
   }
 
   newPost(): Observable<Post> {
@@ -96,13 +105,14 @@ export class BlogService {
 
   updatePost(post: Post): Observable<any> {
     const username = getUsername();
+    post.modified = new Date();
     return this.http
       .put(
         '/api/' + username + '/' + post.postid,
         {
           title: post.title,
           body: post.body,
-          modified: new Date(),
+          // modified: new Date(),
         },
         { responseType: 'text' }
       )
