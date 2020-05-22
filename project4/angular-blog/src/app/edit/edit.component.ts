@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-// import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -19,9 +20,12 @@ export class EditComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.params.subscribe(() => this.getPost());
+  }
 
   getPost(): void {
+    console.log('test');
     const id = +this.route.snapshot.paramMap.get('id');
     this.blogService.getPost(id).subscribe((post) => (this.post = post));
     if (this.post) {
@@ -46,5 +50,12 @@ export class EditComponent implements OnInit {
 
   delete(): void {
     this.blogService.deletePost(this.post.postid);
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.form && this.form.dirty) {
+      this.save();
+    }
+    return true;
   }
 }
