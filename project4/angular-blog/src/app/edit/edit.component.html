@@ -2,30 +2,32 @@
   <h1>Edit Post</h1>
   <form *ngIf="form" [formGroup]="form" #formDir="ngForm">
     <div>
-      <label for="title">Title:</label>
-      <input
-        type="text"
-        id="title"
-        name="title"
-        [(ngModel)]="post.title"
-        formControlName="title"
-      />
-    </div>
-    <div>
-      <label for="body">Body:</label>
-      <textarea
-        id="body"
-        name="body"
-        [rows]="10"
-        [cols]="20"
-        [(ngModel)]="post.body"
-        formControlName="body"
-      ></textarea>
+      <div>
+        <label for="title">Title:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          [(ngModel)]="post.title"
+          formControlName="title"
+        />
+      </div>
+      <div>
+        <label for="body">Body:</label>
+        <textarea
+          id="body"
+          name="body"
+          [rows]="10"
+          [cols]="20"
+          [(ngModel)]="post.body"
+          formControlName="body"
+        ></textarea>
+      </div>
+      <button type="button" [disabled]="form.pristine" (click)="save()">
+        Save
+      </button>
+      <button type="button" (click)="preview()">Preview</button>
+      <button type="button" (click)="delete()">Delete</button>
     </div>
   </form>
-  <button type="button" [disabled]="form.pristine" (click)="save()">
-    Save
-  </button>
-  <button type="button" (click)="preview()">Preview</button>
-  <button type="button" (click)="delete()">Delete</button>
 </div>

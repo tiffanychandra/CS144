@@ -51,11 +51,4 @@ export class EditComponent implements OnInit {
   delete(): void {
     this.blogService.deletePost(this.post.postid);
   }
-
-  canDeactivate(): Observable<boolean> | boolean {
-    if (this.form && this.form.dirty) {
-      this.save();
-    }
-    return true;
-  }
 }
