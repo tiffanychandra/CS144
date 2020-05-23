@@ -18,7 +18,7 @@ var app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.set("pwd", key);
+app.set("key", key);
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -33,7 +33,7 @@ app.all("/editor*", function (req, res, next) {
     req.body.token ||
     req.query.token ||
     req.headers["x-access-token"];
-  jwt.verify(token, req.app.get("pwd"), function (err, decoded) {
+  jwt.verify(token, req.app.get("key"), function (err) {
     if (err) {
       res.redirect("/login?redirect=/editor/");
     } else {
