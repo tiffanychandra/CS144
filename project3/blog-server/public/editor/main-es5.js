@@ -660,17 +660,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     CanDeactivateGuard.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
       token: CanDeactivateGuard,
-      factory: CanDeactivateGuard.ɵfac,
-      providedIn: 'root'
+      factory: CanDeactivateGuard.ɵfac
     });
     /*@__PURE__*/
 
     (function () {
       _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CanDeactivateGuard, [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
-        args: [{
-          providedIn: 'root'
-        }]
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
       }], null, null);
     })();
     /***/
@@ -919,11 +915,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "save",
         value: function save() {
-          var _this4 = this;
-
-          this.blogService.updatePost(this.post).subscribe(function (post) {
-            return _this4.post = post;
-          });
+          this.blogService.updatePost(this.post).subscribe();
           this.form.markAsPristine();
         }
       }, {
@@ -938,10 +930,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "delete",
         value: function _delete() {
-          var _this5 = this;
+          var _this4 = this;
 
           this.blogService.deletePost(this.post.postid).subscribe(function (post) {
-            return _this5.post = post;
+            return _this4.post = post;
           });
           this.router.navigate(['/']);
         }
@@ -1096,27 +1088,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "getPosts",
         value: function getPosts() {
-          var _this6 = this;
+          var _this5 = this;
 
           this.blogService.getPosts().subscribe(function (posts) {
-            return _this6.posts = posts;
+            return _this5.posts = posts;
           });
         }
       }, {
         key: "createPost",
         value: function createPost() {
-          var _this7 = this;
+          var _this6 = this;
 
           var postid;
           this.blogService.newPost().subscribe(function (post) {
-            _this7.posts.push(post);
+            _this6.posts.push(post);
 
             postid = post.postid;
           });
           this.blogService.getPosts().subscribe(function (posts) {
-            return _this7.posts = posts;
+            return _this6.posts = posts;
           });
-          this.router.navigate(['edit', postid]);
+          this.router.navigate(['edit', postid + 1]);
         }
       }]);
 
@@ -1304,12 +1296,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(PreviewComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this8 = this;
+          var _this7 = this;
 
           this.parser = new commonmark__WEBPACK_IMPORTED_MODULE_1__["Parser"]();
           this.htmlRenderer = new commonmark__WEBPACK_IMPORTED_MODULE_1__["HtmlRenderer"]();
           this.route.params.subscribe(function () {
-            return _this8.getPostHTML();
+            return _this7.getPostHTML();
           });
         }
       }, {
@@ -1476,7 +1468,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   /***/
   function _(module, exports, __webpack_require__) {
     module.exports = __webpack_require__(
-    /*! /home/cs144/shared/CS144/project4/angular-blog/src/main.ts */
+    /*! /Users/tiffanychandra/Desktop/cs144/CS144/project4/angular-blog/src/main.ts */
     "./src/main.ts");
     /***/
   }

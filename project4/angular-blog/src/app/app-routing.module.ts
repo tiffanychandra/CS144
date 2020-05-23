@@ -11,9 +11,9 @@ const routes: Routes = [
     canDeactivate: [CanDeactivateGuard],
   },
   {
-  	path: 'preview/:id',
-  	component: PreviewComponent
-  }
+    path: 'preview/:id',
+    component: PreviewComponent,
+  },
 ];
 
 @NgModule({

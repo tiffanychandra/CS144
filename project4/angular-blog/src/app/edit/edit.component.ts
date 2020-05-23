@@ -35,9 +35,7 @@ export class EditComponent implements OnInit {
   }
 
   save(): void {
-    this.blogService
-      .updatePost(this.post)
-      .subscribe((post) => (this.post = post));
+    this.blogService.updatePost(this.post).subscribe();
     this.form.markAsPristine();
   }
 

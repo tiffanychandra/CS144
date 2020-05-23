@@ -53,8 +53,8 @@ const routes = [
     },
     {
         path: 'preview/:id',
-        component: _preview_preview_component__WEBPACK_IMPORTED_MODULE_4__["PreviewComponent"]
-    }
+        component: _preview_preview_component__WEBPACK_IMPORTED_MODULE_4__["PreviewComponent"],
+    },
 ];
 class AppRoutingModule {
 }
@@ -352,12 +352,9 @@ class CanDeactivateGuard {
     }
 }
 CanDeactivateGuard.ɵfac = function CanDeactivateGuard_Factory(t) { return new (t || CanDeactivateGuard)(); };
-CanDeactivateGuard.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: CanDeactivateGuard, factory: CanDeactivateGuard.ɵfac, providedIn: 'root' });
+CanDeactivateGuard.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: CanDeactivateGuard, factory: CanDeactivateGuard.ɵfac });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](CanDeactivateGuard, [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
-        args: [{
-                providedIn: 'root',
-            }]
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"]
     }], null, null); })();
 
 
@@ -469,9 +466,7 @@ class EditComponent {
         }
     }
     save() {
-        this.blogService
-            .updatePost(this.post)
-            .subscribe((post) => (this.post = post));
+        this.blogService.updatePost(this.post).subscribe();
         this.form.markAsPristine();
     }
     preview() {
@@ -559,7 +554,7 @@ class ListComponent {
             postid = post.postid;
         });
         this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
-        this.router.navigate(['edit', postid]);
+        this.router.navigate(['edit', postid + 1]);
     }
 }
 ListComponent.ɵfac = function ListComponent_Factory(t) { return new (t || ListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_blog_service__WEBPACK_IMPORTED_MODULE_1__["BlogService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"])); };
@@ -736,7 +731,7 @@ _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["platformBrowser"]().boot
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/cs144/shared/CS144/project4/angular-blog/src/main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! /Users/tiffanychandra/Desktop/cs144/CS144/project4/angular-blog/src/main.ts */"./src/main.ts");
 
 
 /***/ })
