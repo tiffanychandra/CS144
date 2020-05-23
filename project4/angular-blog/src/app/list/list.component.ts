@@ -13,20 +13,20 @@ export class ListComponent implements OnInit {
   constructor(private blogService: BlogService, private router: Router) {}
 
   ngOnInit(): void {
-    this.getPosts();
-  }
-
-  getPosts(): void {
     this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
   }
+
+  // getPosts(): void {
+  //   this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
+  // }
 
   createPost(): void {
-    let postid;
-    this.blogService.newPost().subscribe((post) => {
-      this.posts.push(post);
-      postid = post.postid;
+    let post: Post;
+    this.blogService.newPost().subscribe((newPost) => {
+      this.posts.push(newPost);
+      post = newPost;
     });
     this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
-    this.router.navigate(['edit', postid + 1]);
+    this.router.navigate(['edit', post.postid]);
   }
 }

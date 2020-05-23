@@ -126,6 +126,7 @@ router.put("/:username/:postid", async function (req, res, next) {
           $set: {
             title: req.body.title,
             body: req.body.body,
+            modified: new Date().getTime(),
           },
         }
       );

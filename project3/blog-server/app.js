@@ -9,6 +9,7 @@ var usersRouter = require("./routes/users");
 var blogRouter = require("./routes/blog");
 var loginRouter = require("./routes/login");
 var apiRouter = require("./routes/api");
+var key = "C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c";
 
 var connectDatabase = require("./connectDatabase");
 
@@ -17,11 +18,29 @@ var app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.set("pwd", key);
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// authentication
+var jwt = require("jsonwebtoken");
+app.all("/editor*", function (req, res, next) {
+  var token =
+    req.cookies.jwt ||
+    req.body.token ||
+    req.query.token ||
+    req.headers["x-access-token"];
+  jwt.verify(token, req.app.get("pwd"), function (err, decoded) {
+    if (err) {
+      res.redirect("/login?redirect=/editor/");
+    } else {
+      next();
+    }
+  });
+});
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);

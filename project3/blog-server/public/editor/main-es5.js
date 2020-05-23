@@ -489,16 +489,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return this.http.get('/api/' + username).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (_) {
             return console.log('fetched posts');
           }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["catchError"])(this.handleError('getPosts', [])));
-        } // getPost(postid: number): Observable<Post> {
-        //   const url = `/api/${getUsername()}/${postid}`;
-        //   this.postObservable = this.http.get<Post>(url).pipe(
-        //     share(),
-        //     tap((_) => console.log(`fetched post id=${postid}`)),
-        //     catchError(this.handleError<Post>(`getPost id=${postid}`))
-        //   );
-        //   return this.postObservable;
-        // }
-
+        }
       }, {
         key: "getPost",
         value: function getPost(postid) {
@@ -512,27 +503,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var _this2 = this;
 
           var username = getUsername();
+          var new_id = this.posts.reduce(function (post1, post2) {
+            return post1.postid > post2.postid ? post1 : post2;
+          }).postid + 1;
           var post = {
-            postid: 0,
+            postid: new_id,
             created: new Date(),
             modified: new Date(),
             title: '',
             body: ''
           };
-          post.postid = this.posts.reduce(function (post1, post2) {
-            return post1.postid > post2.postid ? post1 : post2;
-          }).postid + 1; // let new_id =
-          //   this.posts.reduce((post1, post2) =>
-          //     post1.postid > post2.postid ? post1 : post2
-          //   ).postid + 1;
-          // let post: Post = {
-          //   postid: new_id,
-          //   created: new Date(),
-          //   modified: new Date(),
-          //   title: '',
-          //   body: '',
-          // };
-
           this.posts.push(post);
           return this.http.post('/api/' + username + '/' + post.postid, {
             title: post.title,
@@ -547,7 +527,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         key: "updatePost",
         value: function updatePost(post) {
           var username = getUsername();
-          post.modified = new Date();
+          var old = this.posts.find(function (p) {
+            return p.postid === post.postid;
+          });
+
+          if (old) {
+            this.posts[this.posts.indexOf(old)].title = post.title;
+            this.posts[this.posts.indexOf(old)].body = post.body;
+            this.posts[this.posts.indexOf(old)].modified = new Date();
+          } // post.modified = new Date();
+
+
           return this.http.put('/api/' + username + '/' + post.postid, {
             title: post.title,
             body: post.body,
@@ -930,11 +920,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "delete",
         value: function _delete() {
-          var _this4 = this;
-
-          this.blogService.deletePost(this.post.postid).subscribe(function (post) {
-            return _this4.post = post;
-          });
+          this.blogService.deletePost(this.post.postid).subscribe();
           this.router.navigate(['/']);
         }
       }]);
@@ -1083,32 +1069,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(ListComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          this.getPosts();
-        }
-      }, {
-        key: "getPosts",
-        value: function getPosts() {
-          var _this5 = this;
+          var _this4 = this;
 
           this.blogService.getPosts().subscribe(function (posts) {
-            return _this5.posts = posts;
+            return _this4.posts = posts;
           });
-        }
+        } // getPosts(): void {
+        //   this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
+        // }
+
       }, {
         key: "createPost",
         value: function createPost() {
-          var _this6 = this;
+          var _this5 = this;
 
-          var postid;
-          this.blogService.newPost().subscribe(function (post) {
-            _this6.posts.push(post);
+          var post;
+          this.blogService.newPost().subscribe(function (newPost) {
+            _this5.posts.push(newPost);
 
-            postid = post.postid;
+            post = newPost;
           });
           this.blogService.getPosts().subscribe(function (posts) {
-            return _this6.posts = posts;
+            return _this5.posts = posts;
           });
-          this.router.navigate(['edit', postid + 1]);
+          this.router.navigate(['edit', post.postid]);
         }
       }]);
 
@@ -1296,12 +1280,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(PreviewComponent, [{
         key: "ngOnInit",
         value: function ngOnInit() {
-          var _this7 = this;
+          var _this6 = this;
 
           this.parser = new commonmark__WEBPACK_IMPORTED_MODULE_1__["Parser"]();
           this.htmlRenderer = new commonmark__WEBPACK_IMPORTED_MODULE_1__["HtmlRenderer"]();
           this.route.params.subscribe(function () {
-            return _this7.getPostHTML();
+            return _this6.getPostHTML();
           });
         }
       }, {

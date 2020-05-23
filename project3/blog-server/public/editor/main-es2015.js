@@ -251,40 +251,19 @@ class BlogService {
         const username = getUsername();
         return this.http.get('/api/' + username).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])((_) => console.log('fetched posts')), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["catchError"])(this.handleError('getPosts', [])));
     }
-    // getPost(postid: number): Observable<Post> {
-    //   const url = `/api/${getUsername()}/${postid}`;
-    //   this.postObservable = this.http.get<Post>(url).pipe(
-    //     share(),
-    //     tap((_) => console.log(`fetched post id=${postid}`)),
-    //     catchError(this.handleError<Post>(`getPost id=${postid}`))
-    //   );
-    //   return this.postObservable;
-    // }
     getPost(postid) {
         return this.posts.find((post) => post.postid === postid);
     }
     newPost() {
         const username = getUsername();
+        let new_id = this.posts.reduce((post1, post2) => post1.postid > post2.postid ? post1 : post2).postid + 1;
         let post = {
-            postid: 0,
+            postid: new_id,
             created: new Date(),
             modified: new Date(),
             title: '',
             body: '',
         };
-        post.postid =
-            this.posts.reduce((post1, post2) => post1.postid > post2.postid ? post1 : post2).postid + 1;
-        // let new_id =
-        //   this.posts.reduce((post1, post2) =>
-        //     post1.postid > post2.postid ? post1 : post2
-        //   ).postid + 1;
-        // let post: Post = {
-        //   postid: new_id,
-        //   created: new Date(),
-        //   modified: new Date(),
-        //   title: '',
-        //   body: '',
-        // };
         this.posts.push(post);
         return this.http
             .post('/api/' + username + '/' + post.postid, {
@@ -298,7 +277,13 @@ class BlogService {
     }
     updatePost(post) {
         const username = getUsername();
-        post.modified = new Date();
+        let old = this.posts.find((p) => p.postid === post.postid);
+        if (old) {
+            this.posts[this.posts.indexOf(old)].title = post.title;
+            this.posts[this.posts.indexOf(old)].body = post.body;
+            this.posts[this.posts.indexOf(old)].modified = new Date();
+        }
+        // post.modified = new Date();
         return this.http
             .put('/api/' + username + '/' + post.postid, {
             title: post.title,
@@ -476,9 +461,7 @@ class EditComponent {
         this.router.navigate(['preview', this.post.postid]);
     }
     delete() {
-        this.blogService
-            .deletePost(this.post.postid)
-            .subscribe((post) => (this.post = post));
+        this.blogService.deletePost(this.post.postid).subscribe();
         this.router.navigate(['/']);
     }
 }
@@ -542,19 +525,19 @@ class ListComponent {
         this.router = router;
     }
     ngOnInit() {
-        this.getPosts();
-    }
-    getPosts() {
         this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
     }
+    // getPosts(): void {
+    //   this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
+    // }
     createPost() {
-        let postid;
-        this.blogService.newPost().subscribe((post) => {
-            this.posts.push(post);
-            postid = post.postid;
+        let post;
+        this.blogService.newPost().subscribe((newPost) => {
+            this.posts.push(newPost);
+            post = newPost;
         });
         this.blogService.getPosts().subscribe((posts) => (this.posts = posts));
-        this.router.navigate(['edit', postid + 1]);
+        this.router.navigate(['edit', post.postid]);
     }
 }
 ListComponent.ɵfac = function ListComponent_Factory(t) { return new (t || ListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_blog_service__WEBPACK_IMPORTED_MODULE_1__["BlogService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"])); };
