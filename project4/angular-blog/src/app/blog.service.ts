@@ -34,18 +34,22 @@ export class BlogService {
   }
 
   fetchPosts(username: string): void {
-    this.posts = [];
-    this.http.get<Post[]>('/api/' + username).subscribe((posts) => {
-      this.posts = posts;
-    });
+    if(this.authenticate()) {
+      this.posts = [];
+      this.http.get<Post[]>('/api/' + username).subscribe((posts) => {
+        this.posts = posts;
+      });
+    }
   }
 
   getPosts(): Observable<Post[]> {
-    const username = getUsername();
-    return this.http.get<Post[]>('/api/' + username).pipe(
-      tap((_) => console.log('fetched posts')),
-      catchError(this.handleError<Post[]>('getPosts', []))
-    );
+    if(this.authenticate()) {
+      const username = getUsername();
+      return this.http.get<Post[]>('/api/' + username).pipe(
+        tap((_) => console.log('fetched posts')),
+        catchError(this.handleError<Post[]>('getPosts', []))
+      );
+    }
   }
 
   // getPost(postid: number): Observable<Post> {
@@ -60,50 +64,44 @@ export class BlogService {
   // }
 
   getPost(postid: number): Post {
-    return this.posts.find((post) => post.postid === postid);
+    if(this.authenticate()) {
+      return this.posts.find((post) => post.postid === postid);
+    }
   }
 
   newPost(): Observable<Post> {
-    const username = getUsername();
-    let post: Post = {
-      postid: 0,
-      created: new Date(),
-      modified: new Date(),
-      title: '',
-      body: '',
-    };
-    post.postid =
-      this.posts.reduce((post1, post2) =>
-        post1.postid > post2.postid ? post1 : post2
-      ).postid + 1;
+    if(this.authenticate()) {
+      const username = getUsername();
+      let post: Post = {
+        postid: 0,
+        created: new Date(),
+        modified: new Date(),
+        title: '',
+        body: '',
+      };
+      post.postid =
+        this.posts.reduce((post1, post2) =>
+          post1.postid > post2.postid ? post1 : post2
+        ).postid + 1;
 
-    // let new_id =
-    //   this.posts.reduce((post1, post2) =>
-    //     post1.postid > post2.postid ? post1 : post2
-    //   ).postid + 1;
-    // let post: Post = {
-    //   postid: new_id,
-    //   created: new Date(),
-    //   modified: new Date(),
-    //   title: '',
-    //   body: '',
-    // };
-    this.posts.push(post);
-    return this.http
-      .post<Post>('/api/' + username + '/' + post.postid, {
-        title: post.title,
-        body: post.body,
-      })
-      .pipe(
-        tap((newPost: Post) => {
-          console.log(`added post with id ${newPost.postid}`);
-          this.router.navigate(['/']);
-        }),
-        catchError(this.handleError<Post>('newPost'))
-      );
+      this.posts.push(post);
+      return this.http
+        .post<Post>('/api/' + username + '/' + post.postid, {
+          title: post.title,
+          body: post.body,
+        })
+        .pipe(
+          tap((newPost: Post) => {
+            console.log(`added post with id ${newPost.postid}`);
+            this.router.navigate(['/']);
+          }),
+          catchError(this.handleError<Post>('newPost'))
+        );
+    }
   }
 
   updatePost(post: Post): Observable<any> {
+    if(this.authenticate()) {
     const username = getUsername();
     post.modified = new Date();
     return this.http
@@ -120,15 +118,18 @@ export class BlogService {
         tap((_) => console.log(`updated post with id=${post.postid}`)),
         catchError(this.handleError<any>('updatePost'))
       );
+    }
   }
 
   deletePost(postid: number): Observable<Post> {
-    const username = getUsername();
-    const url = `/api/${username}/${postid}`;
-    return this.http.delete<Post>(url).pipe(
-      tap((_) => console.log(`deleted hero id=${postid}`)),
-      catchError(this.handleError<Post>('deletePost'))
-    );
+    if(this.authenticate()) {
+      const username = getUsername();
+      const url = `/api/${username}/${postid}`;
+      return this.http.delete<Post>(url).pipe(
+        tap((_) => console.log(`deleted hero id=${postid}`)),
+        catchError(this.handleError<Post>('deletePost'))
+      );
+    }
   }
 
   // from angular.io/tutorial/toh-pt6
@@ -144,5 +145,26 @@ export class BlogService {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+  private authenticate() : boolean {
+    var key = "C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c";
+    var token = getUsername();
+    var auth;
+    if (!token) {
+      this.router.navigate(['/login?redirect=/editor/']);
+      return false;
+    }
+    try {
+      auth = jwt_decode.verify(token, key);
+    } catch (e) {
+      this.router.navigate(['/login?redirect=/editor/']);
+      return false;
+    }
+    if (auth.exp <= Math.floor(Date.now() / 1000)) {
+      this.router.navigate(['/login?redirect=/editor/']);
+      return false;
+    } 
+    return true;
   }
 }
