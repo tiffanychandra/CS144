@@ -112,7 +112,7 @@ export class BlogService {
         {
           title: post.title,
           body: post.body,
-          // modified: new Date(),
+          modified: new Date(),
         },
         { responseType: 'text' }
       )

@@ -3,7 +3,7 @@
     <h2>Edit Post</h2>
     <div>
       <div>
-        <label for="title">Title:</label>
+        <h3 for="title">Title:</h3>
         <input
           type="text"
           id="title"
@@ -14,7 +14,7 @@
         />
       </div>
       <div>
-        <label for="body">Body:</label>
+        <h3 for="body">Body:</h3>
         <textarea
           id="body"
           name="body"
@@ -28,7 +28,12 @@
       <div>
         <span>Last Modified: {{ post.modified | date: "long" }}</span>
       </div>
-      <button type="button" class="button" [disabled]="form.pristine" (click)="save()">
+      <button
+        type="button"
+        class="button"
+        [disabled]="form.pristine"
+        (click)="save()"
+      >
         Save
       </button>
       <button type="button" class="button" (click)="preview()">Preview</button>

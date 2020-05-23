@@ -35,7 +35,9 @@ export class EditComponent implements OnInit {
   }
 
   save(): void {
-    this.blogService.updatePost(this.post).subscribe();
+    this.blogService
+      .updatePost(this.post)
+      .subscribe((post) => (this.post = post));
     this.form.markAsPristine();
   }
 
@@ -47,7 +49,9 @@ export class EditComponent implements OnInit {
   }
 
   delete(): void {
-    this.blogService.deletePost(this.post.postid).subscribe();
+    this.blogService
+      .deletePost(this.post.postid)
+      .subscribe((post) => (this.post = post));
     this.router.navigate(['/']);
   }
 }
