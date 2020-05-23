@@ -34,22 +34,28 @@ export class BlogService {
   }
 
   fetchPosts(username: string): void {
-    this.posts = [];
-    this.http.get<Post[]>('/api/' + username).subscribe((posts) => {
-      this.posts = posts;
-    });
+    if(this.authenticate()) {
+      this.posts = [];
+      this.http.get<Post[]>('/api/' + username).subscribe((posts) => {
+        this.posts = posts;
+      });
+    }
   }
 
   getPosts(): Observable<Post[]> {
-    const username = getUsername();
-    return this.http.get<Post[]>('/api/' + username).pipe(
-      tap((_) => console.log('fetched posts')),
-      catchError(this.handleError<Post[]>('getPosts', []))
-    );
+    if(this.authenticate()) {
+      const username = getUsername();
+      return this.http.get<Post[]>('/api/' + username).pipe(
+        tap((_) => console.log('fetched posts')),
+        catchError(this.handleError<Post[]>('getPosts', []))
+      );
+    }
   }
 
   getPost(postid: number): Post {
-    return this.posts.find((post) => post.postid === postid);
+    if(this.authenticate()) {
+      return this.posts.find((post) => post.postid === postid);
+    }
   }
 
   newPost(): Observable<Post> {
@@ -104,6 +110,7 @@ export class BlogService {
         tap((_) => console.log(`updated post with id=${post.postid}`)),
         catchError(this.handleError<any>('updatePost'))
       );
+    }
   }
 
   deletePost(postid: number): Observable<Post> {
@@ -129,5 +136,26 @@ export class BlogService {
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+  private authenticate() : boolean {
+    var key = "C-UFRaksvPKhx1txJYFcut3QGxsafPmwCY6SCly3G6c";
+    var token = getUsername();
+    var auth;
+    if (!token) {
+      this.router.navigate(['/login?redirect=/editor/']);
+      return false;
+    }
+    try {
+      auth = jwt_decode.verify(token, key);
+    } catch (e) {
+      this.router.navigate(['/login?redirect=/editor/']);
+      return false;
+    }
+    if (auth.exp <= Math.floor(Date.now() / 1000)) {
+      this.router.navigate(['/login?redirect=/editor/']);
+      return false;
+    }
+    return true;
   }
 }
