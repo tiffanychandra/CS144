@@ -1,0 +1,11 @@
+<h2>Blogs</h2>
+<div>
+  <button type="button" class="button" (click)="createPost()">New Post</button>
+</div>
+<ul>
+  <li *ngFor="let post of posts">
+    <a [routerLink]="['/edit', post.postid]">
+      {{ post.created | date: "short" }}&nbsp;&nbsp;{{ post.title }}
+    </a>
+  </li>
+</ul>
